@@ -1,31 +1,38 @@
-import mongoose from "mongoose"
+import mongoose, { Schema, Document } from "mongoose";
 
-interface UserDatabase{
-  email : string,
-  password : string,
-  role : string,
-  department : string,
-  canEdit : true,
+interface UserDatabase extends Document {
+  email: string;
+  password: string;
+  role: string;
+  department: string;
+  canEdit: boolean;
 }
 
-const UserSchema = new mongoose.Schema({
-  email : {
-    type : String,
-    unique : true
+const UserSchema: Schema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    required: true,
   },
-  password : {
-    type : String,
+  password: {
+    type: String,
+    required: true,
   },
-  role : {
-    enum : ['head' , 'employee'],
+  role: {
+    type: String,
+    enum: ["head", "employee"],
+    required: true,
   },
-  department : {
-    type : String,
+  department: {
+    type: String,
+    required: true,
   },
-  canEdit : {
-    type : Boolean,
-  }
-})
+  canEdit: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-const Users = mongoose.model("Users" , UserSchema);
+const Users = mongoose.model<UserDatabase>("Users", UserSchema);
+
 export default Users;
