@@ -1,10 +1,13 @@
 import express from "express";
 import dotenv from 'dotenv';
 import router from "./routes/authenticationRoutes";
+import cors from 'cors';
+import dbConnection from "./db/dbConnections";
 
 dotenv.config();
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const PORT = process.env.PORT || "8080"
 
@@ -16,6 +19,7 @@ app.use('/user/auth' , router)
 
 app.listen(parseInt(PORT) , () => {
   console.log(`The Server has Started on ${PORT} `);
+  dbConnection();
 })
 
 
