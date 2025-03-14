@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from 'dotenv';
-import router from "./routes/authenticationRoutes";
+import authRouter from "./routes/authenticationRoutes";
 import cors from 'cors';
 import dbConnection from "./db/dbConnections";
 
@@ -15,7 +15,9 @@ app.get('/' , (req , res) => {
   res.json({message : "Hello , the server is working!"});
 })
 
-app.use('/user/auth' , router)
+app.use('/user/auth' , authRouter);
+
+
 
 app.listen(parseInt(PORT) , () => {
   console.log(`The Server has Started on ${PORT} `);

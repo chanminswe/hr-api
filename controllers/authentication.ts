@@ -12,13 +12,6 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // const findExistingUsername = await Users.findOne({email});
-
-    // if(findExistingUsername){
-    //   res.status(400).json({message : "Username already exist"});
-    //   return;
-    // }
-
     if (!['head', 'employee'].includes(role)) {
       res.status(400).json({ message: "Role must be either 'head' or 'employee'!" });
       return;
@@ -42,11 +35,6 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
     res.status(201).json({ message: "User created successfully!" });
   } catch (error) {
     console.error("Error occurred while registering user:", error);
-
-    // if (process.env.NODE_ENV === 'development') {
-    //   res.status(500).json({ message: "Internal server error", error: (error as Error).message });
-    //   return;
-    // }
 
     res.status(500).json({ message: "Internal server error" });
   }
@@ -80,7 +68,5 @@ const loginUser = async (req : Request, res : Response ) : Promise<void> => {
     return
   }  
 }
-
-
-
-export { registerUser };
+  
+export { registerUser , loginUser };
