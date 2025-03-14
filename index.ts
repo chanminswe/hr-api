@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from 'dotenv';
 import authRouter from "./routes/authenticationRoutes";
+import activityRouter from "./routes/userActivityRoutes";
 import cors from 'cors';
 import dbConnection from "./db/dbConnections";
 
@@ -17,7 +18,7 @@ app.get('/' , (req , res) => {
 
 app.use('/user/auth' , authRouter);
 
-
+app.use('/user/informations/' , activityRouter);
 
 app.listen(parseInt(PORT) , () => {
   console.log(`The Server has Started on ${PORT} `);
