@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 interface UserDatabase extends Document {
   email: string;
   password: string;
+  name: string;
   role: string;
   department: string;
   canEdit: boolean;
@@ -15,6 +16,10 @@ const UserSchema: Schema = new mongoose.Schema({
     required: true,
   },
   password: {
+    type: String,
+    required: true,
+  },
+  name: {
     type: String,
     required: true,
   },

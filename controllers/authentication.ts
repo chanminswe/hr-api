@@ -5,9 +5,9 @@ import jwt from 'jsonwebtoken';
 
 const registerUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, password, role, department, canEdit } = req.body;
+    const { email, password, role, department, canEdit, name } = req.body;
 
-    if (!email || !password || !role || !department || canEdit === undefined) {
+    if (!email || !password || !role || !department || !name || canEdit === undefined) {
       res.status(400).json({ message: "All fields are required!" });
       return;
     }
@@ -22,13 +22,14 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
     const createUser = await Users.create({
       email,
       password: cryptedPassword,
+      name,
       role,
       department,
       canEdit,
     });
 
-    if(!createUser){
-      res.status(400).json({message : "Something went wrong while creating user"});
+    if (!createUser) {
+      res.status(400).json({ message: "Something went wrong while creating user" });
       return
     }
 
@@ -40,33 +41,34 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const loginUser = async (req : Request, res : Response ) : Promise<void> => {
-  try{
-    const {email , password} = req.body;
+const loginUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, password } = req.body;
 
-    if(!email || !password){
-      res.status(400).json({message : "All credentials are necessary"});
+    if (!email || !password) {
+      res.status(400).json({ message: "All credentials are necessary" });
     }
 
-    const findExistingUser = await Users.findOne({email});
+    const findExistingUser = await Users.findOne({ email });
 
-    if(!findExistingUser){
-      res.status(400).json({message : "Couldn't find User"});
+    if (!findExistingUser) {
+      res.status(400).json({ message: "Couldn't find User" });
+      return;
     }
 
-    const token = jwt.sign({email} , process.env.SECRET_TOKEN , {expiresIn : '100d'});
+    const token = jwt.sign({ email }, process.env.SECRET_KEY, { expiresIn: '100d' });
 
-    res.status(200).json({message : "Logged In Sucessfully!" , token});
+    res.status(200).json({ message: "Logged In Sucessfully!", token });
 
-    if(!token){
-      res.status(400).json({message : "Something went wrong while making token!"});
+    if (!token) {
+      res.status(400).json({ message: "Something went wrong while making token!" });
     }
   }
-  catch(error){
-    console.error("Error Occured while loggin in" , error.message );
-    res.status(500).json({message : "Internal Server Error!"});
+  catch (error) {
+    console.error("Error Occured while loggin in", error.message);
+    res.status(500).json({ message: "Internal Server Error!" });
     return
-  }  
+  }
 }
-  
-export { registerUser , loginUser };
+
+export { registerUser, loginUser };

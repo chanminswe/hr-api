@@ -12,16 +12,16 @@ app.use(cors());
 
 const PORT = process.env.PORT || "8080"
 
-app.get('/' , (req , res) => {
-  res.json({message : "Hello , the server is working!"});
+app.get('/', (req, res) => {
+  res.json({ message: "Hello , the server is working!" });
 })
 
-app.use('/user/auth' , authRouter);
+app.use('/user/auth', authRouter);
 
-app.use('/user/informations/' , activityRouter);
+app.use('/user/informations/', activityRouter);
 
-app.listen(parseInt(PORT) , () => {
-  console.log(`The Server has Started on ${PORT} `);
+app.listen(parseInt(PORT), () => {
+  console.log("Raw process.env.PORT:", process.env.PORT);
   dbConnection();
 })
 
