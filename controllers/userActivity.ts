@@ -30,6 +30,16 @@ const gettingUserInformations = async (req: Request, res: Response): Promise<voi
     console.error("Error Occured While Getting User Informations ", error.message);
     res.status(500).json({ message: "Internal Server Error Occured!" });
   }
+};
+
+
+const checkIn = async (req: Request, res: Response): Promise<void> => {
+  try {
+
+  }
+  catch (error) {
+    console.error("Error Occured While Checking In");
+  }
 }
 
 export { gettingUserInformations };

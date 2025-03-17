@@ -67,7 +67,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
   catch (error) {
     console.error("Error Occured while loggin in", error.message);
     res.status(500).json({ message: "Internal Server Error!" });
-    return
+    return;
   }
 }
 

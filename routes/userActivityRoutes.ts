@@ -1,6 +1,6 @@
 import express from 'express'
 import verifyingUser from '../middleware/verifyUserRole';
-import { gettingUserInformations } from '../controllers/userActivity';
+import { gettingUserInformations, } from '../controllers/userActivity';
 
 const activityRouter = express.Router();
 
