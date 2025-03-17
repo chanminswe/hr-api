@@ -1,20 +1,20 @@
-import { Request , Response , NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
 
 
 declare module 'express' {
   interface Request {
     email?: string;
+    id?: number;
   }
 }
 
-const verifyingUser = (req : Request , res : Response , next : NextFunction):Promise <void> => {
-  try{
+const verifyingUser = (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
     const unsplitToken = req.header('Authorization');
 
-    
-    if(!unsplitToken || !unsplitToken.startsWith('Bearer')){
-      res.status(403).json({message : "Token Invalid or Expired!"});
+    if (!unsplitToken || !unsplitToken.startsWith('Bearer')) {
+      res.status(403).json({ message: "Token Invalid or Expired!" });
       return;
     }
 
@@ -22,13 +22,14 @@ const verifyingUser = (req : Request , res : Response , next : NextFunction):Pro
 
     console.log(token);
 
-    const decoded = jwt.verify(token , process.env.SECRET_TOKEN);
+    const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
     req.email = decoded.email;
+    req.id = decoded.id;
     next();
   }
-  catch(error){
-    console.log("Error Occured While Getting User Informations!" , error.message);
-    res.status(400).json({message : "Internal Server Error"});
+  catch (error) {
+    console.log("Error Occured While Getting User Informations!", error.message);
+    res.status(400).json({ message: "Internal Server Error" });
     return;
   }
 }

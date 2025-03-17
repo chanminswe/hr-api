@@ -29,6 +29,11 @@ const AttendanceSchema: Schema = new mongoose.Schema({
 	checkedIn: {
 		type: Boolean,
 		default: false,
-	}
-
+	},
 })
+
+AttendanceSchema.index({ userId: 1, checkInDate: 1 }, { unique: true });
+
+const Attendance = mongoose.model<TimeInterface>("Attendance", AttendanceSchema);
+
+export default Attendance;
