@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import Users from '../models/users';
 import Attendance from "../models/attendance";
 
-
 declare module 'express' {
   interface Request {
     email?: string;
@@ -13,7 +12,7 @@ declare module 'express' {
 const gettingUserInformations = async (req: Request, res: Response): Promise<void> => {
   try {
     const email = req.email;
-    const userId = req.id;
+    const userId = req.userId;
 
     if (!email || !userId) {
       res.status(500).json({ message: "Couldn't get User Information!" });
@@ -26,94 +25,85 @@ const gettingUserInformations = async (req: Request, res: Response): Promise<voi
       res.status(400).json({ message: "Couldn't find the User Informations try again later!" });
       return;
     }
-    res.status(200).json({ message: "User Informations Sucessfully Retrieved", userInformation });
-    return;
-  }
-  catch (error) {
-    console.error("Error Occured While Getting User Informations ", error.message);
-    res.status(500).json({ message: "Internal Server Error Occured!" });
+
+    res.status(200).json({ message: "User Information Successfully Retrieved", userInformation });
+  } catch (error) {
+    console.error("Error Occurred While Getting User Information:", error.message);
+    res.status(500).json({ message: "Internal Server Error Occurred!" });
   }
 };
 
-
 const checkIn = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.id;
+    const userId = req.userId;
 
     if (!userId) {
       res.status(400).json({ message: "Something went wrong while trying to check in" });
+      return;
     }
 
-    const date = new Date();
-    const today = date.getDate();
+    const today = new Date();
+    const checkInDate = new Date(today.setHours(0, 0, 0, 0));
 
-    const existingCheckInRecord = await Attendance.findOne({ userId, checkedInDate: today });
+    const existingCheckInRecord = await Attendance.findOne({ userId, checkInDate });
 
     if (existingCheckInRecord) {
       res.status(400).json({ message: "You have already checked in today" });
       return;
     }
 
-    if (existingCheckInRecord.checkedIn === true) {
-      res.status(400).json({ message: "You hav already checked in today" });
-    }
-
     const newCheckIn = await Attendance.create({
       userId,
-      checkedInTime: new Date(),
-      checkInDate: today,
+      checkInTime: today,
+      checkInDate: checkInDate,
       checkedIn: true
     });
 
     if (!newCheckIn) {
-      res.status(400).json({ message: "Something went wrong while creating check in data" });
+      res.status(400).json({ message: "Something went wrong while creating check-in data" });
       return;
     }
 
-    res.status(201).json({ message: "Checked In Sucessfully!" });
-    return;
-  }
-  catch (error) {
-    console.error("Error Occured While Checking In");
+    res.status(201).json({ message: "Checked In Successfully!" });
+  } catch (error) {
+    console.error("Error Occurred While Checking In:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
-    return;
   }
-}
+};
 
 const checkOut = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.userId;
 
     if (!userId) {
-      res.status(403).json({ message: "Unauthorized acton" });
+      res.status(403).json({ message: "Unauthorized action" });
       return;
     }
 
-    const today = new Date().getDate();
+    const today = new Date();
+    const checkInDate = new Date(today.setHours(0, 0, 0, 0));
 
-    const findExistingUser = await Attendance.findOne({ userId, checkedInDate: today });
+    const findExistingUser = await Attendance.findOne({ userId, checkInDate });
 
     if (!findExistingUser) {
       res.status(400).json({ message: "You haven't checked in today!" });
       return;
     }
 
-    if (findExistingUser.checkedIn === false) {
-      res.status(400).json({ message: "You have checked in today!" });
-      return;
-    }
-    else {
-      findExistingUser.checkOutTime = new Date();
-      res.status(400).json({ message: "Checked Out Sucessfully!" });
+    if (!findExistingUser.checkedIn) {
+      res.status(400).json({ message: "You have not checked in yet!" });
       return;
     }
 
-  }
-  catch (error) {
-    console.error("Error Occured While Trying to check out");
+    findExistingUser.checkOutTime = new Date();
+    await findExistingUser.save();
+
+    res.status(200).json({ message: "Checked Out Successfully!" });
+  } catch (error) {
+    console.error("Error Occurred While Trying to Check Out:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
-    return;
   }
-}
+};
 
 export { gettingUserInformations, checkIn, checkOut };
+

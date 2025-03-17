@@ -12,7 +12,7 @@ const AttendanceSchema: Schema = new mongoose.Schema({
 	userId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Users",
-		requried: true,
+		required: true,
 	},
 	checkInTime: {
 		type: Date,
