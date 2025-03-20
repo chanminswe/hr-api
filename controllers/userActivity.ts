@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Users from '../models/users';
 import Attendance from "../models/attendance";
+import { couldStartTrivia } from "typescript";
 
 declare module 'express' {
   interface Request {
@@ -15,23 +16,19 @@ const gettingUserInformations = async (req: Request, res: Response): Promise<voi
     const userId = req.userId;
 
     if (!email || !userId) {
-      res.status(500).json({ message: "Couldn't get User Information!" });
+      res.status(400).json({ message: "Couldn't get User Information!" });
       return;
     }
 
-    const userInformation = await Users.findOne({ email });
+    console.log("User Information requested");
 
-    if (!userInformation) {
-      res.status(400).json({ message: "Couldn't find the User Informations try again later!" });
-      return;
-    }
-
-    res.status(200).json({ message: "User Information Successfully Retrieved", userInformation });
+    res.status(200).json({ message: "User Information Successfully Retrieved" });
   } catch (error) {
     console.error("Error Occurred While Getting User Information:", error.message);
     res.status(500).json({ message: "Internal Server Error Occurred!" });
   }
 };
+
 
 const checkIn = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -42,29 +39,9 @@ const checkIn = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const today = new Date();
-    const checkInDate = new Date(today.setHours(0, 0, 0, 0));
-
-    const existingCheckInRecord = await Attendance.findOne({ userId, checkInDate });
-
-    if (existingCheckInRecord) {
-      res.status(400).json({ message: "You have already checked in today" });
-      return;
-    }
-
-    const newCheckIn = await Attendance.create({
-      userId,
-      checkInTime: today,
-      checkInDate: checkInDate,
-      checkedIn: true
-    });
-
-    if (!newCheckIn) {
-      res.status(400).json({ message: "Something went wrong while creating check-in data" });
-      return;
-    }
-
+    console.log("Checked In")
     res.status(201).json({ message: "Checked In Successfully!" });
+    return;
   } catch (error) {
     console.error("Error Occurred While Checking In:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
@@ -105,5 +82,28 @@ const checkOut = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export { gettingUserInformations, checkIn, checkOut };
+
+const requestingLeave = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.userId;
+    const email = req.email;
+
+    const { leavetype } = req.body;
+    const typesOfLeaves = ['annual', 'casual', 'unpaid', 'medical'];
+
+    if (!leavetype || typesOfLeaves.includes(leavetype)) {
+      res.status(400).json({ message: "Bad Request! leave type is necessary to request for leave" })
+    }
+
+    res.status(200).json({ message: "Sucessfully requested leave" });
+  }
+  catch (error: any) {
+    console.log("Error Occured while requesting leave", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+
+}
+
+
+export { gettingUserInformations, checkIn, checkOut, requestingLeave };
 

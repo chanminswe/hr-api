@@ -4,7 +4,7 @@ interface TimeInterface extends Document {
 	userId: number;
 	checkInTime: Date;
 	checkOutTime: Date;
-	checkedInDate: Date;
+	checkedInDate: string;
 	checkedIn: boolean;
 }
 
@@ -23,7 +23,7 @@ const AttendanceSchema: Schema = new mongoose.Schema({
 		required: false,
 	},
 	checkInDate: {
-		type: Date,
+		type: String,
 		required: true,
 	},
 	checkedIn: {

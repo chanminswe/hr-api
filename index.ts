@@ -8,7 +8,12 @@ import dbConnection from "./db/dbConnections";
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 
 const PORT = process.env.PORT || "8080"
 
