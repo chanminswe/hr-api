@@ -36,7 +36,8 @@ const UserSchema: Schema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-});
+
+}, { timestamps: true });
 
 const Users = mongoose.model<UserDatabase>("Users", UserSchema);
 

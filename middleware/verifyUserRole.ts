@@ -19,11 +19,8 @@ const verifyingUser = (req: Request, res: Response, next: NextFunction): void =>
     }
 
     const token = unsplitToken.split(' ')[1];
-    console.log("Token: ", token);
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY as string);
-    console.log("Decoded Token: ", decoded);
-
     req.email = decoded.email;
     req.userId = decoded.userId;
     next();

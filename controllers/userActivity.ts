@@ -10,19 +10,27 @@ declare module 'express' {
   }
 }
 
-const gettingUserInformations = async (req: Request, res: Response): Promise<void> => {
+const gettingAttendanceInformation = async (req: Request, res: Response): Promise<void> => {
   try {
     const email = req.email;
     const userId = req.userId;
 
     if (!email || !userId) {
-      res.status(400).json({ message: "Couldn't get User Information!" });
+      res.status(403).json({ message: "Invalid or Expired Token!" });
+      return;
+    };
+
+    const today = new Date();
+    const checkedInDate = today.toDateString();
+
+    const findTodayCheckIn = await Attendance.findOne({ userId, checkedInDate });
+
+    if (!findTodayCheckIn) {
+      res.status(200).json({ message: "Haven't Check In Today!" });
       return;
     }
 
-    console.log("User Information requested");
-
-    res.status(200).json({ message: "User Information Successfully Retrieved" });
+    res.status(200).json({ message: "User Information Successfully Retrieved", findTodayCheckIn });
   } catch (error) {
     console.error("Error Occurred While Getting User Information:", error.message);
     res.status(500).json({ message: "Internal Server Error Occurred!" });
@@ -39,7 +47,27 @@ const checkIn = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    console.log("Checked In")
+    const today = new Date();
+    const checkedInDate = `${today.toDateString()}`
+
+    const findExistingCheckIn = await Attendance.findOne({ userId, checkedInDate });
+
+    if (findExistingCheckIn?.checkedIn === true) {
+      res.status(400).json({ message: "You have already created the data!" });
+      return;
+    }
+
+    const createNewCheckIn = await Attendance.create({
+      userId,
+      checkInTime: today,
+      checkedInDate,
+      checkedIn: true
+    });
+
+    if (!createNewCheckIn) {
+      res.status(400).json({ message: "Something went wrong while checking in !" });
+    };
+
     res.status(201).json({ message: "Checked In Successfully!" });
     return;
   } catch (error) {
@@ -57,23 +85,6 @@ const checkOut = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const today = new Date();
-    const checkInDate = new Date(today.setHours(0, 0, 0, 0));
-
-    const findExistingUser = await Attendance.findOne({ userId, checkInDate });
-
-    if (!findExistingUser) {
-      res.status(400).json({ message: "You haven't checked in today!" });
-      return;
-    }
-
-    if (!findExistingUser.checkedIn) {
-      res.status(400).json({ message: "You have not checked in yet!" });
-      return;
-    }
-
-    findExistingUser.checkOutTime = new Date();
-    await findExistingUser.save();
 
     res.status(200).json({ message: "Checked Out Successfully!" });
   } catch (error) {
@@ -85,25 +96,25 @@ const checkOut = async (req: Request, res: Response): Promise<void> => {
 
 const requestingLeave = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.userId;
-    const email = req.email;
-
-    const { leavetype } = req.body;
+    console.log(req.body);
+    const { selected, leaveType } = req.body;
     const typesOfLeaves = ['annual', 'casual', 'unpaid', 'medical'];
 
-    if (!leavetype || typesOfLeaves.includes(leavetype)) {
-      res.status(400).json({ message: "Bad Request! leave type is necessary to request for leave" })
+    if (!leaveType || !typesOfLeaves.includes(leaveType)) {
+      res.status(400).json({ message: "Bad Request! leave type is necessary to request for leave" });
+      return;
     }
-
     res.status(200).json({ message: "Sucessfully requested leave" });
+    return;
   }
   catch (error: any) {
     console.log("Error Occured while requesting leave", error.message);
     res.status(500).json({ message: "Internal Server Error" });
+    return;
   }
 
 }
 
 
-export { gettingUserInformations, checkIn, checkOut, requestingLeave };
+export { gettingAttendanceInformation, checkIn, checkOut, requestingLeave };
 

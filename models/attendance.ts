@@ -1,16 +1,16 @@
-import mongoose, { Document, Schema } from "mongoose";
+import { Document, Schema, model } from "mongoose";
 
 interface TimeInterface extends Document {
-	userId: number;
+	userId: Schema.Types.ObjectId;
 	checkInTime: Date;
 	checkOutTime: Date;
 	checkedInDate: string;
 	checkedIn: boolean;
 }
 
-const AttendanceSchema: Schema = new mongoose.Schema({
+const AttendanceSchema: Schema = new Schema({
 	userId: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: Schema.Types.ObjectId,
 		ref: "Users",
 		required: true,
 	},
@@ -22,7 +22,7 @@ const AttendanceSchema: Schema = new mongoose.Schema({
 		type: Date,
 		required: false,
 	},
-	checkInDate: {
+	checkedInDate: {
 		type: String,
 		required: true,
 	},
@@ -30,10 +30,10 @@ const AttendanceSchema: Schema = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
-})
+}, { timestamps: true });
 
-AttendanceSchema.index({ userId: 1, checkInDate: 1 }, { unique: true });
+AttendanceSchema.index({ userId: 1, checkedInDate: 1 }, { unique: true });
 
-const Attendance = mongoose.model<TimeInterface>("Attendance", AttendanceSchema);
+const Attendance = model<TimeInterface>("Attendance", AttendanceSchema);
 
 export default Attendance;
