@@ -56,7 +56,15 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token = jwt.sign({ userId: findExistingUser._id, email }, process.env.SECRET_KEY, { expiresIn: '100d' });
+    const token = jwt.sign(
+      {
+        userId: findExistingUser._id,
+        role: findExistingUser.role,
+        department: findExistingUser.department,
+      },
+      process.env.SECRET_KEY,
+      { expiresIn: "100d" }
+    );
 
     res.status(200).json({ message: "Logged In Sucessfully!", token });
 

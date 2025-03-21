@@ -11,8 +11,7 @@ declare module 'express' {
 const verifyingUser = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const unsplitToken = req.header('Authorization');
-    console.log("Received Authorization Header: ", unsplitToken);
-
+    console.log("requested");
     if (!unsplitToken || !unsplitToken.startsWith('Bearer')) {
       res.status(403).json({ message: "Token Invalid or Expired!" });
       return;

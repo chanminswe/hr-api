@@ -4,8 +4,8 @@ interface RequestLeaveType {
 	userId: number;
 	status: string;
 	requestedDates: string;
+	approvedBy: string;
 }
-
 
 const RequestSchema: Schema = new Schema({
 	userId: {
@@ -18,6 +18,9 @@ const RequestSchema: Schema = new Schema({
 		enum: ['pending', 'approved', 'rejected']
 	},
 	requestedDates: {
+		type: String,
+	},
+	approvedBy: {
 		type: String,
 	}
 }, { timestamps: true })

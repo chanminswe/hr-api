@@ -4,7 +4,7 @@ import { checkIn, checkOut, gettingAttendanceInformation, requestingLeave } from
 
 const activityRouter = express.Router();
 
-activityRouter.get('/personalInformations', verifyingUser, gettingAttendanceInformation);
+activityRouter.get('/attendance', verifyingUser, gettingAttendanceInformation);
 
 activityRouter.post('/checkIn', verifyingUser, checkIn);
 

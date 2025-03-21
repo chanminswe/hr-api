@@ -25,6 +25,8 @@ app.use('/user/auth', authRouter);
 
 app.use('/user/informations/', activityRouter);
 
+// app.use('/');
+
 app.listen(parseInt(PORT), () => {
   console.log("Raw process.env.PORT:", process.env.PORT);
   dbConnection();
