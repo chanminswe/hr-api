@@ -1,5 +1,5 @@
 import express from 'express'
-import verifyingUser from '../middleware/verifyUserRole';
+import verifyingUser from '../middleware/verifyUser';
 import { checkIn, checkOut, gettingAttendanceInformation, requestingLeave } from '../controllers/userActivity';
 
 const activityRouter = express.Router();

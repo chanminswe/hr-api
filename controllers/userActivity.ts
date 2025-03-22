@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import Users from '../models/users';
 import Attendance from "../models/attendance";
-import { couldStartTrivia } from "typescript";
 
 declare module 'express' {
   interface Request {
@@ -10,10 +8,11 @@ declare module 'express' {
   }
 }
 
+
 const gettingAttendanceInformation = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, userId } = req;
-    if (!email || !userId) {
+    const userId = req.userId;
+    if (!userId) {
       res.status(403).json({ message: "Invalid or Expired Token!" });
       return;
     }

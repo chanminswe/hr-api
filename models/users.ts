@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 interface UserDatabase extends Document {
   email: string;
   password: string;
-  name: string;
+  fullname: string;
   role: string;
   department: string;
   canEdit: boolean;
@@ -19,13 +19,13 @@ const UserSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  name: {
+  fullname: {
     type: String,
     required: true,
   },
   role: {
     type: String,
-    enum: ["employee", "management", "head", "cLevel"],
+    enum: ["employee", "management", "head", "executive"],
     required: true,
   },
   department: {

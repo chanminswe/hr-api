@@ -1,14 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
 
-declare module 'express' {
-  interface Request {
-    email?: string;
-    userId?: number;
-  }
+interface UserAuthReq extends Request {
+  user?: { userId: number, full: string, role: string, department: string }
 }
 
-const verifyingUser = (req: Request, res: Response, next: NextFunction): void => {
+const verifyingUser = (req: UserAuthReq, res: Response, next: NextFunction): void => {
   try {
     const unsplitToken = req.header('Authorization');
     console.log("requested");
@@ -20,8 +17,11 @@ const verifyingUser = (req: Request, res: Response, next: NextFunction): void =>
     const token = unsplitToken.split(' ')[1];
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY as string);
-    req.email = decoded.email;
-    req.userId = decoded.userId;
+    if (!decoded || !decoded.fullname || !decoded.userId || !decoded.department || !decoded.role) {
+      res.status(400).json({ message: "Couldn't get the necessary data from token!" });
+    }
+
+    req.user = decoded;
     next();
   } catch (error) {
     console.error("Error verifying token: ", error);
