@@ -4,6 +4,7 @@ import authRouter from "./routes/authenticationRoutes";
 import activityRouter from "./routes/userActivityRoutes";
 import cors from 'cors';
 import dbConnection from "./db/dbConnections";
+import holidaysRouter from "./routes/holidaysAuth";
 
 dotenv.config();
 const app = express();
@@ -25,7 +26,7 @@ app.use('/user/auth', authRouter);
 
 app.use('/user/informations/', activityRouter);
 
-// app.use('/');
+app.use('/admin/holidays/', holidaysRouter);
 
 app.listen(parseInt(PORT), () => {
   console.log("Raw process.env.PORT:", process.env.PORT);

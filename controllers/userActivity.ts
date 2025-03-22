@@ -1,17 +1,14 @@
 import { Request, Response } from "express";
 import Attendance from "../models/attendance";
 
-declare module 'express' {
-  interface Request {
-    email?: string;
-    userId?: number;
-  }
+
+interface AuthRequest extends Request {
+  user?: { role: string, department: string, userId: number, fullname: string }
 }
 
-
-const gettingAttendanceInformation = async (req: Request, res: Response): Promise<void> => {
+const gettingAttendanceInformation = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.userId;
+    const userId = req.user?.userId;
     if (!userId) {
       res.status(403).json({ message: "Invalid or Expired Token!" });
       return;
@@ -27,7 +24,6 @@ const gettingAttendanceInformation = async (req: Request, res: Response): Promis
     }
     const checkInTime = findTodayCheckIn.checkInTime;
     const checkOutTime = findTodayCheckIn.checkOutTime ?? null;
-    console.log(checkOutTime);
     res.status(200).json({ message: "Success", checkInTime, checkOutTime });
 
   } catch (error) {
@@ -36,10 +32,9 @@ const gettingAttendanceInformation = async (req: Request, res: Response): Promis
   }
 };
 
-
-const checkIn = async (req: Request, res: Response): Promise<void> => {
+const checkIn = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.userId;
+    const userId = req.user?.userId;
 
     if (!userId) {
       res.status(400).json({ message: "Something went wrong while trying to check in" });
@@ -47,7 +42,7 @@ const checkIn = async (req: Request, res: Response): Promise<void> => {
     }
 
     const today = new Date();
-    const checkedInDate = `${today.toDateString()}`
+    const checkedInDate = `${today.toDateString()}`;
 
     const findExistingCheckIn = await Attendance.findOne({ userId, checkedInDate });
 
@@ -75,9 +70,9 @@ const checkIn = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const checkOut = async (req: Request, res: Response): Promise<void> => {
+const checkOut = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { userId } = req;
+    const { userId } = req.user || {};
 
     if (!userId) {
       res.status(403).json({ message: "Unauthorized action" });
@@ -110,11 +105,10 @@ const checkOut = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-
-const requestingLeave = async (req: Request, res: Response): Promise<void> => {
+const requestingLeave = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    console.log(req.body);
     const { selected, leaveType } = req.body;
+    console.log(req.body);
     const typesOfLeaves = ['annual', 'casual', 'unpaid', 'medical'];
 
     if (!leaveType || !typesOfLeaves.includes(leaveType)) {
@@ -134,4 +128,3 @@ const requestingLeave = async (req: Request, res: Response): Promise<void> => {
 }
 
 export { gettingAttendanceInformation, checkIn, checkOut, requestingLeave };
-

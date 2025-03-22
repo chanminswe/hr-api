@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 
 interface AuthRequest extends Request {
-	user?: { role: string, department: string, userId: number }
+	user?: { role: string, department: string, userId: number, fullname: string }
 }
 
 const verifyHrRole = (req: AuthRequest, res: Response, next: NextFunction): void => {
@@ -24,7 +24,7 @@ const verifyHrRole = (req: AuthRequest, res: Response, next: NextFunction): void
 
 		const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
 
-		if (!decodedToken || !decodedToken.role || !decodedToken.department || !decodedToken.userId) {
+		if (!decodedToken || !decodedToken.role || !decodedToken.department || !decodedToken.userId || !decodedToken.fullname) {
 			res.status(400).json({ message: "token Doesn't included required information!" });
 			return;
 		}
@@ -42,5 +42,6 @@ const verifyHrRole = (req: AuthRequest, res: Response, next: NextFunction): void
 		res.status(500).json({ message: "Internal Server Error" });
 		return;
 	}
-
 }
+
+export default verifyHrRole;
