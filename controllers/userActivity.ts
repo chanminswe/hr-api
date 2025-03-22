@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Attendance from "../models/attendance";
+import Holidays from '../models/holidays';
 
 
 interface AuthRequest extends Request {
@@ -108,7 +109,16 @@ const checkOut = async (req: AuthRequest, res: Response): Promise<void> => {
 const requestingLeave = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { selected, leaveType } = req.body;
-    console.log(req.body);
+
+    const holidays = await Holidays.find();
+
+    selected.map((date: string) => {
+      let changedDate = new Date(date);
+      console.log(changedDate);
+      console.log(typeof (changedDate));
+    });
+
+
     const typesOfLeaves = ['annual', 'casual', 'unpaid', 'medical'];
 
     if (!leaveType || !typesOfLeaves.includes(leaveType)) {

@@ -1,7 +1,7 @@
 import { Schema, Document, model } from 'mongoose';
 
 interface LeaveType {
-	userId: number,
+	userId: Schema.Types.ObjectId,
 	annual: number,
 	casual: number,
 	unpaid: number,
@@ -11,6 +11,7 @@ interface LeaveType {
 const LeaveSchema: Schema = new Schema({
 	userId: {
 		type: Schema.Types.ObjectId,
+		ref: "Users",
 		required: true
 	},
 	annual: {
