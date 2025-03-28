@@ -1,4 +1,4 @@
-import { Schema, Document, model } from 'mongoose';
+import mongoose, { Schema, Document, model } from 'mongoose';
 
 
 export interface HolidaysSchemaType {
