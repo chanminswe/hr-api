@@ -1,10 +1,11 @@
 import { Schema, Document, model } from 'mongoose';
 
-interface RequestLeaveType {
+export interface RequestLeaveType {
 	userId: number;
 	status: string;
-	requestedDates: string;
+	requestedDates: string[];
 	approvedBy: string;
+	department: string;
 }
 
 const RequestSchema: Schema = new Schema({
@@ -15,16 +16,22 @@ const RequestSchema: Schema = new Schema({
 	},
 	status: {
 		type: String,
-		enum: ['pending', 'approved', 'rejected']
+		enum: ['pending', 'approved', 'rejected'],
+		required: true
 	},
 	requestedDates: {
-		type: String,
+		type: [String],
+		required: true
 	},
 	approvedBy: {
 		type: String,
+	},
+	department: {
+		type: String,
+		required: true
 	}
 }, { timestamps: true })
 
-const Request = model<RequestLeaveType>('Request', RequestSchema);
+const LeaveRequest = model<RequestLeaveType>('LeaveRequest', RequestSchema);
 
-export default Request;
+export default LeaveRequest;

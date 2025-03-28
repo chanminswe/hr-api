@@ -1,7 +1,7 @@
 import { Schema, Document, model } from 'mongoose';
 
 
-interface HolidaysSchemaType {
+export interface HolidaysSchemaType {
 	holidays: Date;
 	nameOfHoliday: String;
 }

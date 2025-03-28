@@ -16,21 +16,22 @@ const LeaveSchema: Schema = new Schema({
 	},
 	annual: {
 		type: Number,
-		default: 10
+		default: parseInt(process.env.ANNUAL_LEAVE)
 	},
 	casual: {
 		type: Number,
-		default: 6
+		default: parseInt(process.env.CASUAL_LEAVE)
 	},
 	unpaid: {
 		type: Number,
-		default: 30
+		default: parseInt(process.env.UNPAID_LEAVE)
 	},
 	medical: {
 		type: Number,
-		default: 10
+		default: parseInt(process.env.MEDICAL_LEAVE)
 	}
 }, { timestamps: true });
 
 
-const Leave = model<LeaveType>('Leave', LeaveSchema);
+const LeaveAvailable = model<LeaveType>('LeaveAvailable', LeaveSchema);
+export default LeaveAvailable;
