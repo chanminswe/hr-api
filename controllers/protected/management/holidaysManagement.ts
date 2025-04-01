@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Holidays from "../models/holidays";
+import Holidays from "../../models/holidays";
 
 interface UserRequest extends Request {
 	user?: { role: string, department: string, userId: number, fullname: string };

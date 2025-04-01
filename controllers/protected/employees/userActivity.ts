@@ -1,9 +1,5 @@
 import { Request, Response } from "express";
-import Attendance from "../models/attendance";
-import Holidays from '../models/holidays';
-import LeaveRequest, { RequestLeaveType } from "../models/requestLeave";
-import { HolidaysSchemaType } from "../models/holidays";
-import LeaveAvaiable from '../models/leave';
+import Attendance from "../../../models/attendance";
 
 interface AuthRequest extends Request {
   user?: { role: string, department: string, userId: number, fullname: string }
@@ -111,70 +107,4 @@ const checkOut = async (req: AuthRequest, res: Response): Promise<void> => {
   }
 };
 
-const requestingLeave = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
-    const { userId, department } = req.user;
-    const { selected, leaveType } = req.body;
-
-    const typesOfLeaves = ['annual', 'casual', 'unpaid', 'medical'];
-
-    if (!selected || !leaveType || Array.isArray(selected)) {
-      res.status(400).json({ message: "Please Recheck your data!" });
-    }
-
-    if (!leaveType || !typesOfLeaves.includes(leaveType)) {
-      res.status(400).json({ message: "Bad Request! leave type is necessary to request for leave" });
-      return;
-    };
-
-    console.log("Selected ", selected, "leavetype", leaveType);
-    const holidays = await Holidays.find();
-    let throwError = false;
-
-    holidays.map((date: HolidaysSchemaType, index) => {
-      let splitDate = date.holidays.toISOString().split('T');
-      let time = splitDate[0];
-      if (selected.includes(time)) {
-        throwError = true;
-      }
-    });
-
-    if (throwError) {
-      res.status(200).json({ message: "Please don't select holidays as leave date!" });
-      return;
-    };
-
-    const findIfRequestedDateAvailable = await LeaveAvaiable.findOne({ userId });
-
-    if (!findIfRequestedDateAvailable) {
-      const createUserLeave = await LeaveAvaiable.create({ userId });
-
-      if (!createUserLeave) {
-        res.status(400).json({ message: "Something went wrong while creating the database!" });
-        return;
-      }
-    };
-
-    if (findIfRequestedDateAvailable[leaveType] <= selected.length()) {
-      res.status(400).json({ message: "Don't Have enough leave date!" });
-      return;
-    };
-
-    const createRequestStatus = LeaveRequest.create({ userId, status: 'pending', requestedDates: selected, department });
-
-    if (!createRequestStatus) {
-      res.status(400).json({ message: "Something went wrong while trying to create request status!" });
-      return;
-    }
-
-    res.status(200).json({ message: "Sucessfully requested leave please wait for your supervisor to approve" });
-    return;
-  }
-  catch (error: any) {
-    console.log("Error Occured while requesting leave", error.message);
-    res.status(500).json({ message: "Internal Server Error" });
-    return;
-  }
-}
-
-export { gettingAttendanceInformation, checkIn, checkOut, requestingLeave };
+export { gettingAttendanceInformation, checkIn, checkOut };

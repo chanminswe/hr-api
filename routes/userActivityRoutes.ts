@@ -1,7 +1,7 @@
 import express from 'express'
 import verifyingUser from '../middleware/verifyUser';
-import { checkIn, checkOut, gettingAttendanceInformation } from '../controllers/userActivity';
-import { requestingLeave } from '../controllers/leaveRequest';
+import { checkIn, checkOut, gettingAttendanceInformation } from '../controllers/protected/employees/userActivity';
+import { requestingLeave } from '../controllers/protected/employees/leaveRequest';
 const activityRouter = express.Router();
 
 activityRouter.get('/attendance', verifyingUser, gettingAttendanceInformation);

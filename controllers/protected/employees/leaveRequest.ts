@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import Holidays from '../models/holidays';
-import LeaveRequest from "../models/requestLeave";
-import { HolidaysSchemaType } from "../models/holidays";
-import LeaveAvaiable from '../models/leave';
+import Holidays from '../../../models/holidays';
+import LeaveRequest from "../../../models/requestLeave";
+import { HolidaysSchemaType } from "../../../models/holidays";
+import LeaveAvaiable from '../../../models/leave';
+
 interface TokenType extends Request {
 	user: { role: string, department: string, userId: number, fullname: string }
 }
@@ -17,7 +18,6 @@ const checkIfInputsAreValid = (selected: string[], leaveType: string): { valid: 
 	if (!leaveType || !typesOfLeaves.includes(leaveType)) {
 		return { valid: false, message: "Bad Request! leave type is necessary to request for leave" };
 	}
-
 	return { valid: true };
 };
 

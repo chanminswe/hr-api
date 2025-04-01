@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import bcrypt from "bcrypt";
-import Users from "../models/users";
+import Users from "../../models/users";
 import jwt from "jsonwebtoken";
 
 const registerUser: RequestHandler = async (req, res) => {
