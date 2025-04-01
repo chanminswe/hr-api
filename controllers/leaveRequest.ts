@@ -3,7 +3,6 @@ import Holidays from '../models/holidays';
 import LeaveRequest from "../models/requestLeave";
 import { HolidaysSchemaType } from "../models/holidays";
 import LeaveAvaiable from '../models/leave';
-
 interface TokenType extends Request {
 	user: { role: string, department: string, userId: number, fullname: string }
 }
@@ -35,7 +34,6 @@ const requestingLeave = async (req: TokenType, res: Response): Promise<void> => 
 		const { userId, department } = req.user;
 		const { selected, leaveType } = req.body;
 
-		// Validate inputs
 		const inputValidation = checkIfInputsAreValid(selected, leaveType);
 		if (!inputValidation.valid) {
 			res.status(400).json({ message: inputValidation.message });
@@ -44,14 +42,12 @@ const requestingLeave = async (req: TokenType, res: Response): Promise<void> => 
 
 		console.log("Selected ", selected, "leavetype", leaveType);
 
-		// Check holidays
 		const holidays = await Holidays.find();
 		if (checkIfRequestedDatePartOfHolidays(holidays, selected)) {
 			res.status(400).json({ message: "Please don't select holidays as leave date!" });
 			return;
 		}
 
-		// Get or create leave balance
 		let findIfRequestedDateAvailable = await LeaveAvaiable.findOne({ userId });
 		if (!findIfRequestedDateAvailable) {
 			findIfRequestedDateAvailable = await LeaveAvaiable.create({ userId });
@@ -63,13 +59,18 @@ const requestingLeave = async (req: TokenType, res: Response): Promise<void> => 
 
 		console.log(findIfRequestedDateAvailable);
 
-		// Check leave balance
 		if (findIfRequestedDateAvailable[leaveType] < selected.length) {
 			res.status(400).json({ message: "Don't have enough leave days!" });
 			return;
 		}
 
-		// Create leave request
+		const findPendingRequestStatus = await LeaveRequest.find({ userId, status: 'pending' });
+
+		if (findPendingRequestStatus.length > 0) {
+			res.status(200).json({ message: "You already have an existing pending leave requests!" });
+			return;
+		}
+
 		const createRequestStatus = await LeaveRequest.create({
 			userId,
 			status: 'pending',
