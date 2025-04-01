@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 interface UserAuthReq extends Request {
   user?: { userId: number, fullname: string, role: string, department: string }
-}
+};
 
 const verifyingUser = (req: UserAuthReq, res: Response, next: NextFunction): void => {
   try {

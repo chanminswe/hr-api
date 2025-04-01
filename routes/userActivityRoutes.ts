@@ -12,4 +12,6 @@ activityRouter.post('/checkOut', verifyingUser, checkOut);
 
 activityRouter.post('/requestLeave', verifyingUser, requestingLeave);
 
+activityRouter.get('/inbox', verifyingUser,);
+
 export default activityRouter;
