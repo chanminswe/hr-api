@@ -17,13 +17,11 @@ const getUserInbox = async (req: AuthRequest, res: Response): Promise<void> => {
 		const findInbox = await Inbox.find({ userId });
 
 		if (!findInbox) {
-			res.status(400).json({ message: "Couldn't get any inbox!" });
+			res.status(200).json({ message: "Couldn't get any inbox!", findInbox: {} });
 			return;
 		};
-
 		res.status(200).json({ message: "Sucessfully retrieved !", findInbox });
 		return;
-
 	}
 	catch (error: any) {
 		console.log("Error Occured at get User Inbox Controller", error.message);
