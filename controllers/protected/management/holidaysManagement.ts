@@ -18,7 +18,7 @@ const addingHolidays = async (req: UserRequest, res: Response): Promise<void> =>
 		const { year, month, date, nameOfHoliday }: HolidayType = req.body;
 
 		if (!adminInfo || !date || !month || !year || !nameOfHoliday) {
-			res.status(400).json({ message: "Bad Request! All fields are required." });
+			res.status(400).json({ message: "Bad Request! All fields are required.", success: false });
 			return;
 		}
 
@@ -28,7 +28,7 @@ const addingHolidays = async (req: UserRequest, res: Response): Promise<void> =>
 		console.log("Storing Date", storingDate.toISOString());
 
 		if (!(storingDate instanceof Date) || isNaN(storingDate.getTime())) {
-			res.status(400).json({ message: "Bad Request! Invalid date format." });
+			res.status(400).json({ message: "Bad Request! Invalid date format.", success: false });
 			return;
 		}
 
@@ -38,14 +38,14 @@ const addingHolidays = async (req: UserRequest, res: Response): Promise<void> =>
 		});
 
 		if (!addHolidays) {
-			res.status(400).json({ message: "Failed to add holiday. Please try again." });
+			res.status(400).json({ message: "Failed to add holiday. Please try again.", success: false });
 			return;
 		}
 
-		res.status(200).json({ message: "Holiday added successfully!" });
+		res.status(200).json({ message: "Holiday added successfully!", success: true });
 	} catch (error: any) {
 		console.error("Error in addingHolidays controller:", error.message);
-		res.status(500).json({ message: "Internal Server Error" });
+		res.status(500).json({ message: "Internal Server Error", success: false });
 	}
 };
 

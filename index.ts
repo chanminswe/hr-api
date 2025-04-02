@@ -22,10 +22,13 @@ app.get('/', (req, res) => {
   res.json({ message: "Hello , the server is working!" });
 })
 
+//for authentication
 app.use('/user/auth', authRouter);
 
+//for information about user
 app.use('/user/informations/', activityRouter);
 
+//for management
 app.use('/admin/holidays/', holidaysRouter);
 
 app.listen(parseInt(PORT), () => {

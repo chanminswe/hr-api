@@ -10,26 +10,26 @@ const verifyHrRole = (req: AuthRequest, res: Response, next: NextFunction): void
 		const unsplitToken = req.header('Authorization');
 
 		if (!unsplitToken || !unsplitToken.startsWith('Bearer')) {
-			res.status(403).json({ message: "Couldn't Contain Headers" });
+			res.status(403).json({ message: "Couldn't Contain Headers", success: false });
 			return;
 		}
 
 		const token = unsplitToken.split(" ")[1];
 
 		if (!token) {
-			res.status(400).json({ message: "Couldn't Contain the token!" });
+			res.status(400).json({ message: "Couldn't Contain the token!", success: false });
 			return;
 		}
 
 		const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
 
 		if (!decodedToken || !decodedToken.role || !decodedToken.department || !decodedToken.userId || !decodedToken.fullname) {
-			res.status(400).json({ message: "token Doesn't included required information!" });
+			res.status(400).json({ message: "token Doesn't included required information!", success: false });
 			return;
 		}
 
 		if (decodedToken.role !== 'management' && decodedToken.department !== 'HumanResource') {
-			res.status(403).json({ message: "You are UnAuthorized to update holidays" });
+			res.status(403).json({ message: "You are UnAuthorized to update holidays", success: false });
 			return;
 		}
 
@@ -38,7 +38,7 @@ const verifyHrRole = (req: AuthRequest, res: Response, next: NextFunction): void
 	}
 	catch (error) {
 		console.log("Error Occured At Verifying the HR Role", error.message);
-		res.status(500).json({ message: "Internal Server Error" });
+		res.status(500).json({ message: "Internal Server Error", success: false });
 		return;
 	}
 }
