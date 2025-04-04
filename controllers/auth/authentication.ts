@@ -19,7 +19,7 @@ const registerUser: RequestHandler = async (req, res) => {
 
     const cryptedPassword = await bcrypt.hash(password, 10);
 
-    const createUser = await Users.create({
+    const createUserinDB = await Users.create({
       email,
       password: cryptedPassword,
       fullname,
@@ -28,12 +28,13 @@ const registerUser: RequestHandler = async (req, res) => {
       canEdit,
     });
 
-    if (!createUser) {
+    if (!createUserinDB) {
       res.status(400).json({ message: "Something went wrong while creating user", success: false });
       return;
     }
+
     res.status(201).json({ message: "User created successfully!", success: true });
-    return
+    return;
   } catch (error) {
     console.error("Error occurred while registering user:", error);
     res.status(500).json({ message: "Internal server error", success: true });
