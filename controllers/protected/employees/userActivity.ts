@@ -67,7 +67,7 @@ const checkIn = async (req: AuthRequest, res: Response): Promise<void> => {
 
     res.status(200).json({ message: "Checked In Successfully!", success: true });
     return;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error Occurred While Checking In:", error.message);
     res.status(500).json({ message: "Internal Server Error", success: false });
   }

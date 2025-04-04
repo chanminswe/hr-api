@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import Users from "../../models/users";
 import jwt from "jsonwebtoken";
 
-const registerUser: RequestHandler = async (req, res) => {
+const registerUser: RequestHandler = async (req, res): Promise<void> => {
   try {
     const { email, password, role, department, canEdit, fullname } = req.body;
 
@@ -14,7 +14,7 @@ const registerUser: RequestHandler = async (req, res) => {
 
     if (!["management", "employee", "head", 'executive'].includes(role)) {
       res.status(400).json({ message: "Role must be either 'head' or 'employee'!", success: false });
-      return
+      return;
     }
 
     const cryptedPassword = await bcrypt.hash(password, 10);

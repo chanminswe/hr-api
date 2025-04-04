@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
+import { TokenPayload } from "../types/returnTokenType";
 
 interface UserAuthReq extends Request {
   user?: { userId: number, fullname: string, role: string, department: string }
 };
+
 
 const verifyingUser = (req: UserAuthReq, res: Response, next: NextFunction): void => {
   try {
@@ -16,7 +18,7 @@ const verifyingUser = (req: UserAuthReq, res: Response, next: NextFunction): voi
 
     const token = unsplitToken.split(' ')[1];
 
-    const decoded = jwt.verify(token, process.env.SECRET_KEY as string);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY as string) as TokenPayload;
 
     if (!decoded || !decoded.fullname || !decoded.userId || !decoded.department || !decoded.role) {
       res.status(400).json({ message: "Couldn't get the necessary data from token!", success: false });

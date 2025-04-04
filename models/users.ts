@@ -1,13 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { UserModelType } from "../types/userModelType";
 
-interface UserDatabase extends Document {
-  email: string;
-  password: string;
-  fullname: string;
-  role: string;
-  department: string;
-  canEdit: boolean;
-}
 
 const UserSchema: Schema = new mongoose.Schema({
   email: {
@@ -39,6 +32,6 @@ const UserSchema: Schema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-const Users = mongoose.model<UserDatabase>("Users", UserSchema);
+const Users = mongoose.model<UserModelType>("Users", UserSchema);
 
 export default Users;

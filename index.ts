@@ -7,7 +7,7 @@ import authRouter from "./routes/authenticationRoutes";
 import activityRouter from "./routes/userActivityRoutes";
 import holidaysRouter from "./routes/holidaysAuth";
 //security
-import rateLimit from 'express-rate-limiter';
+import rateLimit from 'express-rate-limit';
 import helmet from "helmet";
 import cors from 'cors';
 
@@ -31,14 +31,10 @@ app.get('/health', (req, res) => {
   res.json({ status: "Healthy!", timeStamp: new Date().toISOString() });
 })
 
-//for authentication
-app.use('/user/auth', authRouter);
-
-//for information about user
-app.use('/user/informations/', activityRouter);
-
-//for management
-app.use('/admin/holidays/', holidaysRouter);
+//APIs
+app.use('/api/user/auth', authRouter);
+app.use('/api/user/informations/', activityRouter);
+app.use('/api/admin/holidays/', holidaysRouter);
 
 app.listen(parseInt(PORT), () => {
   console.log("Raw process.env.PORT:", process.env.PORT);

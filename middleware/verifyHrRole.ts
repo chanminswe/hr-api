@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
+import { TokenPayload } from "../types/returnTokenType";
+
 
 interface AuthRequest extends Request {
 	user?: { role: string, department: string, userId: number, fullname: string }
@@ -21,7 +23,12 @@ const verifyHrRole = (req: AuthRequest, res: Response, next: NextFunction): void
 			return;
 		}
 
-		const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
+		if (!process.env.SECRET_KEY) {
+			res.status(400).json({ message: "Don't have the Necessary ENV file" });
+			return;
+		}
+
+		const decodedToken = jwt.verify(token, process.env.SECRET_KEY) as TokenPayload;
 
 		if (!decodedToken || !decodedToken.role || !decodedToken.department || !decodedToken.userId || !decodedToken.fullname) {
 			res.status(400).json({ message: "token Doesn't included required information!", success: false });
