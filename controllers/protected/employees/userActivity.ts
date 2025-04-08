@@ -14,6 +14,7 @@ const gettingAttendanceInformation = async (req: AuthRequest, res: Response): Pr
     };
 
     const today = new Date().toDateString();
+    console.log(today);
 
     const findTodayCheckIn = await Attendance.findOne({ userId, checkedInDate: today });
 

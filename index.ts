@@ -22,8 +22,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: "Too many requests , please try again later!" });
-app.use(limiter);
+// const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: "Too many requests , please try again later!" });
+// app.use(limiter);
 
 const PORT = process.env.PORT || "8080"
 

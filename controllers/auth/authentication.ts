@@ -2,24 +2,26 @@ import { RequestHandler } from "express";
 import bcrypt from "bcrypt";
 import Users from "../../models/users";
 import jwt from "jsonwebtoken";
+import { createErrorResponse } from "../../types/errorType";
+import { createSuccessResponse } from "../../types/successType";
 
-const registerUser: RequestHandler = async (req, res): Promise<void> => {
+const registerUser: RequestHandler = async (req, res) => {
   try {
     const { email, password, role, department, canEdit, fullname } = req.body;
 
     if (!email || !password || !role || !department || !fullname || canEdit === undefined) {
-      res.status(400).json({ message: "All fields are required!", success: false });
+      res.status(400).json(createErrorResponse("All fields are necessary", 400, "Input Error"));
       return;
     }
 
     if (!["management", "employee", "head", 'executive'].includes(role)) {
-      res.status(400).json({ message: "Role must be either 'head' or 'employee'!", success: false });
-      return;
+      res.status(400).json(createErrorResponse("Invalid Role", 400, "Input Error"));
+      return
     }
 
     const cryptedPassword = await bcrypt.hash(password, 10);
 
-    const createUserinDB = await Users.create({
+    const createUser = await Users.create({
       email,
       password: cryptedPassword,
       fullname,
@@ -28,17 +30,17 @@ const registerUser: RequestHandler = async (req, res): Promise<void> => {
       canEdit,
     });
 
-    if (!createUserinDB) {
-      res.status(400).json({ message: "Something went wrong while creating user", success: false });
+    if (!createUser) {
+      res.status(400).json(createErrorResponse("Couldn't Create User", 400, "Database Error"));
       return;
-    }
+    };
 
-    res.status(201).json({ message: "User created successfully!", success: true });
-    return;
+    res.status(201).json(createSuccessResponse("Created Successfully", 201));
+    return
   } catch (error) {
     console.error("Error occurred while registering user:", error);
-    res.status(500).json({ message: "Internal server error", success: true });
-    return;
+    res.status(500).json(createErrorResponse("Internal Server Error", 500, "Server Error"));
+    return
   }
 };
 
@@ -47,21 +49,21 @@ const loginUser: RequestHandler = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      res.status(400).json({ message: "All credentials are necessary", success: false });
+      res.status(400).json(createErrorResponse("All Credentials are necessary!", 400, "Input Error"));
       return;
     }
 
-    const findExistingUser = await Users.findOne({ email });
+    const findExistingUser = await Users.findOne({ email }).select('+password').lean();
 
     if (!findExistingUser) {
-      res.status(400).json({ message: "Couldn't find User", success: false });
+      res.status(400).json(createErrorResponse("All Credentials are necessary!", 400, "Doesn't Exist"));
       return;
     }
 
     const isPasswordValid = await bcrypt.compare(password, findExistingUser.password);
 
     if (!isPasswordValid) {
-      res.status(400).json({ message: "Invalid credentials", success: false });
+      res.status(400).json(createErrorResponse("Invalid Credentails", 400, "Doesn't Exist"));
       return;
     }
 
@@ -76,11 +78,11 @@ const loginUser: RequestHandler = async (req, res) => {
       { expiresIn: "100d" }
     );
 
-    res.status(200).json({ message: "Logged In Successfully!", token, success: true });
+    res.status(200).json(createSuccessResponse("Log In Sucessfully", 200, { token }));
     return;
   } catch (error) {
-    console.error("Error Occurred while logging in", error);
-    res.status(500).json({ message: "Internal Server Error!", success: false });
+    console.error("Error Occurred while logging in", error.message);
+    res.status(500).json(createErrorResponse("Internal Server Error", 500, "Server Error!"));
     return;
   }
 };

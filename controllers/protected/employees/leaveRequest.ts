@@ -3,6 +3,8 @@ import Holidays from '../../../models/holidays';
 import LeaveRequest from "../../../models/requestLeave";
 import { HolidaysSchemaType } from "../../../models/holidays";
 import LeaveAvaiable from '../../../models/leave';
+import { createErrorResponse } from "../../../types/errorType";
+import { createSuccessResponse } from "../../../types/successType";
 
 interface TokenType extends Request {
 	user: { role: string, department: string, userId: number, fullname: string }
@@ -36,15 +38,17 @@ const requestingLeave = async (req: TokenType, res: Response): Promise<void> => 
 
 		const inputValidation = checkIfInputsAreValid(selected, leaveType);
 		if (!inputValidation.valid) {
-			res.status(400).json({ message: inputValidation.message });
+			res.status(400).json(createErrorResponse(inputValidation.message, 400, "Input Error"));
 			return;
-		}
+		};
+
+
 
 		console.log("Selected ", selected, "leavetype", leaveType);
 
 		const holidays = await Holidays.find();
 		if (checkIfRequestedDatePartOfHolidays(holidays, selected)) {
-			res.status(400).json({ message: "Please don't select holidays as leave date!" });
+			res.status(400).json(createErrorResponse("Please Don't Select Holidays", 400, "Input Error"));
 			return;
 		}
 

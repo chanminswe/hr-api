@@ -33,7 +33,6 @@ const AttendanceSchema: Schema = new Schema({
 }, { timestamps: true });
 
 AttendanceSchema.index({ userId: 1, checkedInDate: 1 }, { unique: true });
-
 const Attendance = model<TimeInterface>("Attendance", AttendanceSchema);
 
 export default Attendance;
