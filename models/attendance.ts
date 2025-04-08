@@ -4,7 +4,7 @@ interface TimeInterface extends Document {
 	userId: Schema.Types.ObjectId;
 	checkInTime: Date;
 	checkOutTime: Date;
-	checkedInDate: string;
+	checkedInDate: Date;
 	checkedIn: boolean;
 }
 
@@ -23,7 +23,7 @@ const AttendanceSchema: Schema = new Schema({
 		required: false,
 	},
 	checkedInDate: {
-		type: String,
+		type: Date,
 		required: true,
 	},
 	checkedIn: {

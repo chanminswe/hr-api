@@ -10,6 +10,7 @@ import holidaysRouter from "./routes/holidaysAuth";
 import rateLimit from 'express-rate-limit';
 import helmet from "helmet";
 import cors from 'cors';
+import redis from "./utils/redis";
 
 
 dotenv.config();
@@ -25,13 +26,26 @@ app.use(cors({
 // const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: "Too many requests , please try again later!" });
 // app.use(limiter);
 
+
+
 const PORT = process.env.PORT || "8080"
 
 app.get('/health', (req, res) => {
   res.json({ status: "Healthy!", timeStamp: new Date().toISOString() });
 })
 
-//APIs
+app.get('/redis-test', async (req, res) => {
+  try {
+    await redis.set('test-key', 'hello redis', 'EX', 10);
+    const value = await redis.get('test-key');
+    res.json({ success: true, value: value });
+  }
+  catch (error: any) {
+    console.error("Error Occured While testing route redis-test", error.message);
+    res.json({ success: false, error: error.message });
+  }
+})
+
 app.use('/api/user/auth', authRouter);
 app.use('/api/user/informations/', activityRouter);
 app.use('/api/admin/holidays/', holidaysRouter);
